@@ -14,15 +14,20 @@ const sunset = document.getElementById("sunset");
 const windSpeed = document.getElementById("wind-speed");
 const forecastList = document.getElementById("forecast-list");
 const temperatureElement = document.getElementById("temperature");
+const list = document.getElementById("search-list")
+
 
 let clothingVisible = true;
-
+let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+const MAX_ITEMS = 10;
 // Add an event listener to the input field to detect when the user enters text
 cityInput.addEventListener("input", function () {
+  //clear list
+  list.innerHTML = "";
   const city = cityInput.value.trim(); // Remove any leading/trailing whitespace
   if (city.length > 0) {
     // If the input field is not empty, make an API call to find matching cities and their weather information
-    const url = `https://api.openweathermap.org/data/2.5/find?q=${ encodeURIComponent(city) }&appid=${ API_KEY }`;
+    const url = `https://api.openweathermap.org/data/2.5/find?q=${encodeURIComponent(city)}&appid=${API_KEY}`;
     fetch(url)
       .then(response => response.json())
       .then(data => {
@@ -33,7 +38,7 @@ cityInput.addEventListener("input", function () {
           const cityName = item.name;
           const countryName = item.sys.country;
           const optionElement = document.createElement("option");
-          optionElement.value = `${ cityName }, ${ countryName }, ${ item.coord.lat }, ${ item.coord.lon }`;
+          optionElement.value = `${cityName}, ${countryName}, ${item.coord.lat}, ${item.coord.lon}`;
           cityListElement.appendChild(optionElement);
         }
       })
@@ -45,6 +50,7 @@ cityInput.addEventListener("input", function () {
     cityListElement.innerHTML = "";
   }
 });
+
 
 // add event listener for click event
 getWeatherBtn.addEventListener("click", getWeather);
@@ -76,7 +82,7 @@ function hideClothing() {
   if (clothingVisible) {
     const clothesImages = document.getElementById("clothes-images").querySelectorAll("img");
     for (let i = 0; i < clothesImages.length; i++) {
-      clothesImages[ i ].style.display = "none";
+      clothesImages[i].style.display = "none";
     }
     document.getElementById("rainboots-image").style.display = "none";
     document.getElementById("umbrella-image").style.display = "none";
@@ -93,24 +99,33 @@ CityName1.addEventListener('DOMSubtreeModified', showWeatherInfo);
 
 function getWeather() {
   // construct the URL for fetching weather information
-  const weatherUrl = `${ WEATHER_URL }?q=${ cityInput.value }&appid=${ API_KEY }&units=metric`;
+  const weatherUrl = `${WEATHER_URL}?q=${cityInput.value}&appid=${API_KEY}&units=metric`;
 
   // fetch weather information
   fetch(weatherUrl)
     .then(response => response.json())
     .then(data => {
       cityName.textContent = data.name;
-      weatherIcon.src = `https://api.openweathermap.org/img/w/${ data.weather[ 0 ].icon }.png`;
-      condition.textContent = data.weather[ 0 ].main;
-      details.textContent = data.weather[ 0 ].description;
+      //add cityName to searchHistory
+      if (!searchHistory.includes(cityName.textContent) && cityInput.value !== "") { searchHistory.push(cityName.textContent); }
+      //limit search items to 10 
+      if (searchHistory.length > MAX_ITEMS) {
+        searchHistory = searchHistory.slice(-MAX_ITEMS);
+      }
+      //store search items in localStorage for data persistence
+      localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+
+      weatherIcon.src = `https://api.openweathermap.org/img/w/${data.weather[0].icon}.png`;
+      condition.textContent = data.weather[0].main;
+      details.textContent = data.weather[0].description;
       sunrise.textContent = new Date(data.sys.sunrise * 1000).toLocaleTimeString();
       sunset.textContent = new Date(data.sys.sunset * 1000).toLocaleTimeString();
       windSpeed.textContent = data.wind.speed;
 
       // recommend clothes based on weather and temperature
       const temperature = data.main.temp;
-      temperatureElement.textContent = `${ temperature.toFixed(1) }°C`;
-      const weatherCondition = data.weather[ 0 ].main;
+      temperatureElement.textContent = `${temperature.toFixed(1)}°C`;
+      const weatherCondition = data.weather[0].main;
 
       let recommendedClothes = "";
       // Select all images within the clothes-images div and hide them
@@ -121,7 +136,7 @@ function getWeather() {
       document.getElementById("footwear").style.display = "block";
       document.getElementById("rainboots-image").style.display = "none";
       document.getElementById("umbrella-image").style.display = "none";
-  
+
       if (temperature > 20) {
         recommendedClothes = "shorts, t-shirt, and sandals.";
         document.getElementById("shorts-image").style.display = "inline-block";
@@ -157,7 +172,7 @@ function getWeather() {
       // get forecast information
       const lat = data.coord.lat;
       const lon = data.coord.lon;
-      const forecastUrl = `${ FORECAST_URL }?lat=${ lat }&lon=${ lon }&exclude=current,minutely,hourly,alerts&appid=${ API_KEY }&units=metric`;
+      const forecastUrl = `${FORECAST_URL}?lat=${lat}&lon=${lon}&exclude=current,minutely,hourly,alerts&appid=${API_KEY}&units=metric`;
       return fetch(forecastUrl);
     })
 
@@ -168,14 +183,14 @@ function getWeather() {
 
       // clear previous forecast items
       forecastContainer.innerHTML = "";
-      
+
       for (let i = 0; i < 7; i++) {
         const forecast = forecastData.daily[i];
-      
+
         // create forecast item element
         const forecastItem = document.createElement("div");
         forecastItem.classList.add("forecast-item");
-      
+
         // create and add icon element
         const icon = document.createElement("img");
         icon.classList.add("forecast-icon");
@@ -185,24 +200,53 @@ function getWeather() {
         } catch (err) {
           // code that handles the error
           console.log("This mf piece of mf shit: " + err);
-        } 
-      
+        }
+
         forecastItem.appendChild(icon);
-      
+
         // create and add day of week element
         const dayOfWeek = document.createElement("div");
         dayOfWeek.classList.add("forecast-day-of-week");
         dayOfWeek.textContent = new Date(forecast.dt * 1000).toLocaleDateString(undefined, { weekday: 'short' });
         forecastItem.appendChild(dayOfWeek);
-      
+
         // create and add temperature range element
         const tempRange = document.createElement("div");
         tempRange.classList.add("forecast-temp-range");
         tempRange.textContent = `${forecast.temp.min.toFixed(1)}°C / ${forecast.temp.max.toFixed(1)}°C`;
         forecastItem.appendChild(tempRange);
-      
+
         // append the forecast item to the container element
         forecastContainer.appendChild(forecastItem);
       }
     })
 }
+
+function hideSearchHistoryDropdown() {
+  list.style.display = "none";
+}
+function showSearchHistoryDropdown() {
+  list.style.display = "block";
+}
+function populateSearchHistoryDropdown() {
+  list.innerHTML = "";
+  searchHistory.forEach((searchedItem) => {
+    let a = document.createElement("a");
+    let br = document.createElement("br");
+    a.innerHTML = searchedItem;
+    a.classList.add("list-item")
+    a.onclick = () => { cityInput.value = a.innerHTML; list.innerHTML = ""; }
+    list.appendChild(a);
+    list.appendChild(br);
+  });
+}
+
+cityInput.onfocus = () => {
+  populateSearchHistoryDropdown();
+  showSearchHistoryDropdown();
+};
+
+cityInput.onblur = () => {
+  setTimeout(hideSearchHistoryDropdown, 200);
+};
+

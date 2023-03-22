@@ -81,3 +81,29 @@
     color:#2a42c9;
     background-color: #FBB829;
   }
+
+  #search-list{
+    left: 90px;
+    width: 168px;
+    position: absolute;
+    /* border: 1px solid lightgrey; */
+    border-radius: 5px;
+    display: block;
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .list-item{
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    padding: 5px 20px;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: all 1.02s ease;
+  }
+
+  .list-item:hover{
+    background-color: rgba(124, 229, 243, 0.2);
+    transform: scale(1.07);
+  }
+
