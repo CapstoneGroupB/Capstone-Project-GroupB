@@ -19,7 +19,7 @@
 #clothes-images {
   float         : right;
   align-items: center;
-  margin-top: -10%;
+  margin-top: -30%;
   display       : flex;
 }
 
@@ -48,6 +48,12 @@
 #clothes-images img {
   width : 85%;
   height: auto;
+}
+
+#options img {
+  width : 10%;
+  height: auto;
+  margin-left: 100px;
 }
 
 #umbrella-image img {
