@@ -282,20 +282,29 @@ function bottomSelection() {
   clothingOptions.innerHTML = "";
   if (recommendedClothes.includes("shorts")) {
     clothingOptions.innerHTML += `<img id="shorts-image1" src="../Images/bottoms/shortsNoColor.png" alt="Shorts" style="z-index: 1">`;
-    clothingOptions.innerHTML += `<img id="shorts-image1" src="../Images/bottoms/shortsNoColor.png" alt="Shorts" style="z-index: 1">`;
-    clothingOptions.innerHTML += `<img id="shorts-image1" src="../Images/bottoms/shortsNoColor.png" alt="Shorts" style="z-index: 1">`;
+    clothingOptions.innerHTML += `<img id="shorts-image1" src="../Images/bottoms/skirtNoColor.png" alt="Shorts" style="z-index: 1">`;
+    clothingOptions.innerHTML += `<img id="shorts-image1" src="../Images/bottoms/denim-shortsColor.png" alt="Shorts" style="z-index: 1">`;
   }  else if (recommendedClothes.includes("pants")) {
-    clothingOptions.innerHTML += `<img id="pants-image1" src="../Images/bottoms/jeans.png" alt="Pants" style="z-index: 1">`;
-    clothingOptions.innerHTML += `<img id="pants-image1" src="../Images/bottoms/jeans.png" alt="Pants" style="z-index: 1">`;
-    clothingOptions.innerHTML += `<img id="pants-image1" src="../Images/bottoms/jeans.png" alt="Pants" style="z-index: 1">`;
-    clothingOptions.innerHTML += `<img id="pants-image1" src="../Images/bottoms/jeans.png" alt="Pants" style="z-index: 1">`;
+    clothingOptions.innerHTML += `<img id="pants-image1" src="../Images/bottoms/jeansRipped.png" alt="Pants" style="z-index: 1">`;
+    clothingOptions.innerHTML += `<img id="pants-image1" src="../Images/bottoms/trousersNoColor.png" alt="Pants" style="z-index: 1">`;
+    clothingOptions.innerHTML += `<img id="pants-image1" src="../Images/bottoms/trousersOrange.png" alt="Pants" style="z-index: 1">`;
   }
 }
 function footSelection() {
   //populate 4 images of footwear for the user to look at
+  clothingOptions.innerHTML = "";
+  if (recommendedClothes.includes("")) {
 
+  }  else if (recommendedClothes.includes("")) {
+
+  }
 }
 function accSelection() {
   //populate 4 images of accessories for the user to look at
-
+  clothingOptions.innerHTML = "";
+  if (recommendedClothes.includes("")) {
+    
+  }  else if (recommendedClothes.includes("")) {
+    
+  }
 }
